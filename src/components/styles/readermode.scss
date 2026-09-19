@@ -1,24 +1,56 @@
+// ============ 阅读模式按钮：视口右上角常驻（fixed）============
+// 说明：v5 的 header 槽位实际渲染在 .center 列内部（DefaultFrame 结构），
+// 属于"正文上方"而非全宽顶栏——跟随滚动、且只对齐 .center 右缘。
+// 因此按钮改为 position:fixed 直接锚定视口右上角：
+//   - 不随页面滚动，桌面/移动端一致
+//   - 阅读模式开启（侧栏 display:none）后依然存在，退出入口常驻
+//   - 脱离文档流，不占据 header 行布局空间
 .readermode {
   cursor: pointer;
   padding: 0;
-  position: relative;
+  position: fixed; // 视口锚定，不随滚动
+  top: 0.75rem;
+  right: 1rem;
+  z-index: 200; // 高于 sidebar(z-index:1) 与 popover 层
   background: none;
   border: none;
-  width: 20px;
+  width: 32px;
   height: 32px;
   margin: 0;
   text-align: inherit;
   flex-shrink: 0;
+  border-radius: 6px;
+  transition: background-color 0.15s ease;
+
+  // 悬停反馈（fixed 后脱离原上下文，自带一点可点击区域提示）
+  &:hover {
+    background-color: var(--lightgray);
+  }
 
   & svg {
     position: absolute;
     width: 20px;
     height: 20px;
     top: calc(50% - 10px);
+    left: calc(50% - 10px);
     fill: var(--darkgray);
     stroke: var(--darkgray);
-    transition: opacity 0.1s ease;
+    transition:
+      fill 0.15s ease,
+      stroke 0.15s ease;
   }
+}
+
+// ============ 激活态视觉区分 ============
+// 阅读模式开启时按钮图标高亮为主色，一眼可辨当前状态。
+:root[reader-mode="on"] .readermode svg {
+  fill: var(--secondary);
+  stroke: var(--secondary);
+}
+
+// 阅读模式开启时按钮底色也提亮一档，强化"已开启"的视觉信号
+:root[reader-mode="on"] .readermode {
+  background-color: var(--highlight);
 }
 
 // ============ 任务6：全宽阅读（无占位）============
