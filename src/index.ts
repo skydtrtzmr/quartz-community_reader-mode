@@ -4,5 +4,6 @@ export { default as ReaderMode } from "./components/ReaderMode";
 export type {
   QuartzComponent,
   QuartzComponentProps,
+  QuartzComponentConstructor,
   StringResource,
 } from "@quartz-community/types";

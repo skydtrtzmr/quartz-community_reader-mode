@@ -21,14 +21,40 @@
   }
 }
 
+// ============ 任务6：全宽阅读（无占位）============
+// 修正社区版 `::root`（双冒号，无效选择器，规则从未生效）为 `:root`。
+// 社区版仅淡化侧栏（opacity 0，仍占布局空间）；此处彻底移除侧栏并折叠
+// grid 列，正文拉伸至全宽 —— "隐藏组件后不保留空白占位"。
 :root[reader-mode="on"] {
-  & .sidebar.left,
-  & .sidebar.right {
-    opacity: 0;
-    transition: opacity 0.2s ease;
+  // 特异性说明：base.scss 的 `.page > #quartz-body .sidebar { display: flex }` 为 (1,2,0)，
+  // 若仅用 `.sidebar.left` (0,4,0) 会被其覆盖 —— 必须带上 #quartz-body 提升到 (1,4,0)。
+  & #quartz-body .sidebar.left,
+  & #quartz-body .sidebar.right {
+    display: none; // 不留空白占位
+  }
 
-    &:hover {
-      opacity: 1;
+  // #quartz-body 是桌面版 grid 容器：
+  //   左栏宽 auto | 正文 1fr | 右栏 auto（variables.scss $desktopGrid）
+  // 侧栏 display:none 后其 grid 列自动塌缩为 0，正文自然占满全宽；
+  // 此处显式重声明以覆盖媒体查询内的列定义。
+  & #quartz-body {
+    grid-template-columns: auto 1fr auto;
+    column-gap: 0;
+
+    // 与主项目 variables.scss 的 $mobile 断点保持一致（插件 scss 独立编译，无法引用其变量）
+    @media all and (max-width: 800px) {
+      grid-template-columns: 1fr;
     }
+  }
+
+  // 正文区域解除最大宽度限制（保持左右少量呼吸边距）
+  & .center,
+  & .center > article {
+    max-width: 100%;
+  }
+  & .center {
+    padding-left: 2rem;
+    padding-right: 2rem;
+    box-sizing: border-box;
   }
 }

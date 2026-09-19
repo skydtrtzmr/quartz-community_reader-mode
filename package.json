@@ -81,8 +81,8 @@
     "npm": ">=10.9.2"
   },
   "quartz": {
-    "name": "reader-mode",
-    "displayName": "Reader Mode",
+    "name": "reader-mode-pro",
+    "displayName": "Reader Mode Pro",
     "category": "component",
     "version": "1.0.0",
     "quartzVersion": ">=5.0.0",
