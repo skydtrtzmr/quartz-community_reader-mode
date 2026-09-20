@@ -90,3 +90,17 @@
     box-sizing: border-box;
   }
 }
+
+// ============ 与全局图谱浮层的冲突修正（BUG-COM-003）============
+// 现象：先打开全局图谱、再切阅读模式 → 图谱消失且再也打不开（只能切回阅读模式恢复）。
+// 根因：全局图谱浮层 `.global-graph-outer`（`position: fixed; z-index: 9999`）在 DOM 上
+// 嵌在右栏内部（graph-pro 的 Graph 组件渲染在 `.sidebar.right > .graph` 里），
+// 而上面的 `display: none` 会连 fixed 后代一起从渲染树移除——fixed 与 z-index 都救不了
+// `display:none` 的祖先。
+// 处理：浮层处于打开态（`.active`）时保留右栏在渲染树中。浮层是全屏 fixed + 模糊遮罩，
+// 遮罩之下恢复的侧栏不会露出来；浮层关闭后立即回到"无侧栏全宽阅读"。
+// 特异性：(1,6,0) > 上方规则的 (1,4,0)，无需 !important。
+// 依赖 `:has()`（Chrome 105+ / Safari 15.4+ / Firefox 121+）；不支持时退化为旧行为，不影响其它功能。
+:root[reader-mode="on"] #quartz-body:has(.global-graph-outer.active) .sidebar.right {
+  display: flex;
+}
