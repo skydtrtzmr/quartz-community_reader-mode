@@ -65,18 +65,22 @@
     display: none; // 不留空白占位
   }
 
-  // #quartz-body 是桌面版 grid 容器：
-  //   左栏宽 auto | 正文 1fr | 右栏 auto（variables.scss $desktopGrid）
-  // 侧栏 display:none 后其 grid 列自动塌缩为 0，正文自然占满全宽；
-  // 此处显式重声明以覆盖媒体查询内的列定义。
+  // DefaultFrame 的 .center 本身没有 grid-area；隐藏左栏后必须显式把它
+  // 放进 grid-center，否则会自动落进第一列，正文和图谱都被压窄。
   & #quartz-body {
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns: 0 minmax(0, 1fr) 0;
     column-gap: 0;
 
     // 与主项目 variables.scss 的 $mobile 断点保持一致（插件 scss 独立编译，无法引用其变量）
     @media all and (max-width: 800px) {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
     }
+  }
+
+  & #quartz-body > .center {
+    grid-area: grid-center;
+    min-width: 0;
+    width: 100%;
   }
 
   // 正文区域解除最大宽度限制（保持左右少量呼吸边距）
